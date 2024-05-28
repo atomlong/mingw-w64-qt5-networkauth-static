@@ -10,7 +10,7 @@
 
 _qt_module=qtnetworkauth
 pkgname=mingw-w64-qt5-networkauth-static
-pkgver=5.15.13
+pkgver=5.15.14
 pkgrel=1
 arch=('any')
 pkgdesc="Network authentication module (mingw-w64)"
@@ -18,15 +18,16 @@ depends=('mingw-w64-qt5-base-static')
 optdepends=()
 makedepends=('mingw-w64-gcc')
 license=('GPL3' 'LGPL3' 'FDL' 'custom')
-_commit=ed2291d454fac207f6b1555d30b9227e51be611b
+_commit=28180f28c98e329676463e24cef0097cba45bc00
 _basever=${pkgver%%+*}
+pkgver+=+kde+r1
 makedepends+=('git')
 options=('!strip' '!buildflags' 'staticlibs')
 groups=('mingw-w64-qt5')
 url='https://www.qt.io/'
 _pkgfqn=${_qt_module}
 source=(git+https://invent.kde.org/qt/qt/$_pkgfqn#commit=$_commit)
-sha256sums=('475fa3de48d02ac48e3a3b4c3cd0111f214070e2fbbb8a433f2ac09bb8a968ce')
+sha256sums=('2070a7a6e774c4816fb43b395ed0989792cd1b54a9cf958636ef0aa2fb36c818')
 
 _architectures='i686-w64-mingw32 x86_64-w64-mingw32'
 
@@ -50,7 +51,7 @@ build() {
       msg2 "Building ${_config##*=} version for ${_arch}"
       mkdir -p build-${_arch}-${_config##*=} && pushd build-${_arch}-${_config##*=}
       ${_arch}-qmake-qt5 ../${_qt_module}.pro ${_config} ${_additional_qmake_args}
-      make -j$(nproc)
+      make
       popd
     done
   done
@@ -63,7 +64,7 @@ package() {
     for _config in "${_configurations[@]}"; do
       pushd build-${_arch}-${_config##*=}
 
-      make -j$(nproc) INSTALL_ROOT="$pkgdir" install
+      make INSTALL_ROOT="$pkgdir" install
 
       # use prl files from build directory since installed prl files seem to have incorrect QMAKE_PRL_LIBS_FOR_CMAKE
       if [[ -d 'lib' ]]; then
